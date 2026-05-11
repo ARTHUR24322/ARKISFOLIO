@@ -1,0 +1,216 @@
+.container {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.addBtn {
+    background: #8B5CF6;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.form {
+    background: #161616;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 32px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.f {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.f label {
+    font-size: 13px;
+    color: #888;
+}
+
+.f input,
+.f select,
+.f textarea {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.fCheckbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.cancel {
+    background: transparent;
+    color: #888;
+}
+
+.save {
+    background: #8B5CF6;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.itemCard {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 24px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.itemMain {
+    display: flex;
+    gap: 16px;
+}
+
+.itemEmoji {
+    font-size: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.itemMeta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.itemPrice {
+    font-weight: 700;
+    color: #4F8EF7;
+    font-family: var(--font-mono);
+}
+
+.itemType {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+}
+
+.itemActions {
+    display: flex;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 16px;
+}
+
+.itemActions button {
+    flex: 1;
+    background: #1a1a1a;
+    color: #ccc;
+    font-size: 13px;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.itemActions button:hover {
+    background: #252525;
+    color: white;
+}
+
+.itemActions .delete {
+    color: #ef4444;
+}
+
+.itemActions .delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.previewContainer {
+    margin-top: 12px;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.previewLabel {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.smallPreview {
+    max-width: 200px;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}

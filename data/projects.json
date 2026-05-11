@@ -1,0 +1,109 @@
+[
+    {
+        "id": "1",
+        "category": "Web",
+        "title": "Dashboard SaaS Analytics",
+        "description": "Tableau de bord analytique en temps réel pour visualiser des KPIs critiques avec des graphiques animés.",
+        "emoji": "📊",
+        "gradient": "linear-gradient(135deg, #1a1a4e 0%, #0f0f2e 100%)",
+        "accent": "#4F8EF7",
+        "tags": [
+            "Next.js",
+            "GSAP",
+            "Node.js"
+        ],
+        "liveUrl": "#",
+        "year": "2024",
+        "published": true,
+        "mediaUrl": "/uploads/projects/1773484601592-00-51-40.mp4",
+        "updatedAt": "2026-03-14T10:36:41.628Z"
+    },
+    {
+        "id": "2",
+        "category": "3D",
+        "title": "Visualisation Produit 3D",
+        "description": "Configurateur 3D interactif avec rotations en temps réel et changement de matériaux pour une marque de montres.",
+        "emoji": "⌚",
+        "gradient": "linear-gradient(135deg, #2e1a3a 0%, #1e0f2a 100%)",
+        "accent": "#8B5CF6",
+        "tags": [
+            "Three.js",
+            "React",
+            "WebGL"
+        ],
+        "liveUrl": "#",
+        "year": "2024",
+        "published": true,
+        "mediaUrl": "/uploads/projects/1773484658621-12-47-15.mp4",
+        "updatedAt": "2026-03-14T10:37:38.629Z"
+    },
+    {
+        "id": "3",
+        "category": "IA",
+        "title": "Agent IA Support Client",
+        "description": "Agent IA intégré, connecté à la base de données produits, capable de résoudre 80% des demandes automatiquement.",
+        "emoji": "🤖",
+        "gradient": "linear-gradient(135deg, #2a1a1a 0%, #1e0f0f 100%)",
+        "accent": "#22D3EE",
+        "tags": [
+            "OpenAI",
+            "Next.js",
+            "Pinecone"
+        ],
+        "liveUrl": "#",
+        "year": "2025",
+        "published": true
+    },
+    {
+        "id": "4",
+        "category": "Web",
+        "title": "E-commerce Premium",
+        "description": "Site vitrine haut de gamme avec animations GSAP, panier temps réel et checkout Stripe optimisé.",
+        "emoji": "🛍️",
+        "gradient": "linear-gradient(135deg, #1a2e1a 0%, #0f1e0f 100%)",
+        "accent": "#4F8EF7",
+        "tags": [
+            "Next.js",
+            "Stripe",
+            "Sanity CMS"
+        ],
+        "liveUrl": "#",
+        "year": "2025",
+        "published": true
+    },
+    {
+        "id": "5",
+        "category": "IA",
+        "title": "Tunnel Leads IA",
+        "description": "Pipeline IA complet pour qualifier et relancer les prospects avec séquences personnalisées et CRM automatisé.",
+        "emoji": "🎯",
+        "gradient": "linear-gradient(135deg, #1a2a1a 0%, #0f1e0f 100%)",
+        "accent": "#8B5CF6",
+        "tags": [
+            "n8n",
+            "OpenAI",
+            "Airtable"
+        ],
+        "liveUrl": "#",
+        "year": "2025",
+        "published": true,
+        "updatedAt": "2026-03-13T03:14:30.183Z"
+    },
+    {
+        "id": "6",
+        "category": "3D",
+        "title": "Expérience Metaverse",
+        "description": "Landing page avec scène 3D procédurale, particules interactives et scroll basé sur WebGL.",
+        "emoji": "🌐",
+        "gradient": "linear-gradient(135deg, #1a2a3a 0%, #0f1a2e 100%)",
+        "accent": "#22D3EE",
+        "tags": [
+            "Three.js",
+            "GSAP",
+            "GLSL"
+        ],
+        "liveUrl": "#",
+        "year": "2025",
+        "published": true
+    }
+]

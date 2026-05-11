@@ -1,0 +1,30 @@
+{
+  "name": "arthur-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.105.6",
+    "@react-three/fiber": "^8.16.8",
+    "@supabase/supabase-js": "^2.105.4",
+    "bcryptjs": "^3.0.3",
+    "gsap": "^3.12.5",
+    "helmet": "^7.2.0",
+    "jose": "^6.2.1",
+    "lenis": "^1.1.14",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "three": "^0.163.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "25.6.2",
+    "eslint": "^8",
+    "typescript": "6.0.3"
+  }
+}

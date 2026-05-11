@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://arthur-portfolio-v2.vercel.app/sitemap.xml

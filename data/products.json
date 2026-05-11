@@ -1,0 +1,136 @@
+[
+    {
+        "id": "1",
+        "type": "template",
+        "badge": "🔥 Populaire",
+        "title": "Template Portfolio Next.js",
+        "description": "Portfolio premium avec Three.js, GSAP animations, dark mode et section contact intégrée. Prêt à déployer.",
+        "price": 49,
+        "currency": "$",
+        "gradient": "linear-gradient(135deg, #1a1a4e 0%, #0f0f2e 100%)",
+        "accent": "#4F8EF7",
+        "emoji": "🎨",
+        "features": [
+            "Next.js 14",
+            "Three.js 3D",
+            "GSAP animé",
+            "Dark Mode",
+            "Responsive"
+        ],
+        "cta": "Acheter ce template",
+        "published": true,
+        "featured": false,
+        "updatedAt": "2026-03-20T12:37:41.996Z"
+    },
+    {
+        "id": "2",
+        "type": "service",
+        "badge": "⚡ Livraison rapide",
+        "title": "Audit & Refonte UI",
+        "description": "Analyse complète de votre interface + recommandations détaillées + maquette Figma refaite. Rendu en 72h.",
+        "price": 149,
+        "currency": "$",
+        "gradient": "linear-gradient(135deg, #2e1a3a 0%, #1e0f2a 100%)",
+        "accent": "#8B5CF6",
+        "emoji": "🔍",
+        "features": [
+            "Audit UX/UI",
+            "Rapport PDF",
+            "Maquette Figma",
+            "Recommandations SEO",
+            "72h chrono"
+        ],
+        "cta": "Commander l'audit",
+        "published": true,
+        "featured": false,
+        "updatedAt": "2026-03-20T12:37:49.538Z"
+    },
+    {
+        "id": "3",
+        "type": "service",
+        "badge": "✦ Premium",
+        "title": "Intégration Agent IA",
+        "description": "Ajout d'un agent IA sur votre site : support client, génération de leads, assistant produit. Tout inclus.",
+        "price": 299,
+        "currency": "€",
+        "gradient": "linear-gradient(135deg, #1a2a3a 0%, #0f1a2e 100%)",
+        "accent": "#22D3EE",
+        "emoji": "🤖",
+        "features": [
+            "Agent OpenAI",
+            "Formation & mémoire",
+            "Déploiement inclus",
+            "Support 30j",
+            "Analytics"
+        ],
+        "cta": "Intégrer l'IA",
+        "published": true,
+        "featured": false
+    },
+    {
+        "id": "4",
+        "type": "template",
+        "badge": "🆕 Nouveau",
+        "title": "Template SaaS Dashboard",
+        "description": "Dashboard analytique moderne avec graphiques interactifs, auth, dark mode et système de rôles.",
+        "price": 79,
+        "currency": "€",
+        "gradient": "linear-gradient(135deg, #1a2e1a 0%, #0f1e0f 100%)",
+        "accent": "#4F8EF7",
+        "emoji": "📊",
+        "features": [
+            "Next.js 14",
+            "Auth incluse",
+            "Graphiques animés",
+            "Multi-rôles",
+            "API prête"
+        ],
+        "cta": "Acheter ce template",
+        "published": true,
+        "featured": false
+    },
+    {
+        "id": "5",
+        "type": "pack",
+        "badge": "💎 Best Value",
+        "title": "Pack Lancement Complet",
+        "description": "Site vitrine + intégration IA + formation de 2h + suivi 30 jours. Tout ce qu'il faut pour décoller.",
+        "price": 599,
+        "currency": "€",
+        "gradient": "linear-gradient(135deg, #2a1a1a 0%, #1e0f0f 100%)",
+        "accent": "#8B5CF6",
+        "emoji": "🚀",
+        "features": [
+            "Site vitrine complet",
+            "Agent IA intégré",
+            "Formation 2h",
+            "Suivi 30j",
+            "SEO optimisé"
+        ],
+        "cta": "Obtenir le pack",
+        "published": true,
+        "featured": true
+    },
+    {
+        "id": "6",
+        "type": "template",
+        "badge": "🎯 Conversion",
+        "title": "Landing Page Haute Conv.",
+        "description": "Landing page conçue pour maximiser les conversions avec CTA optimisés, social proof et A/B ready.",
+        "price": 39,
+        "currency": "€",
+        "gradient": "linear-gradient(135deg, #1a2a1a 0%, #0f1e0f 100%)",
+        "accent": "#22D3EE",
+        "emoji": "🎯",
+        "features": [
+            "A/B Testing",
+            "CTA optimisés",
+            "Formulaire lead",
+            "Analytics",
+            "Mobile-first"
+        ],
+        "cta": "Acheter ce template",
+        "published": true,
+        "featured": false
+    }
+]

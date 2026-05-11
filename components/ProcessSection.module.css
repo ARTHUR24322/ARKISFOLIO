@@ -1,0 +1,147 @@
+.section {
+    padding: 120px 0;
+    background: linear-gradient(to bottom, var(--bg-primary), var(--bg-surface));
+    overflow: hidden;
+}
+
+.heading {
+    font-size: clamp(30px, 3.5vw, 48px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 72px;
+    max-width: 600px;
+}
+
+.wrapper {
+    position: relative;
+}
+
+.progressLine {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    right: 28px;
+    height: 1px;
+    background: var(--border);
+    transform-origin: left;
+    z-index: 0;
+}
+
+.progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: var(--gradient-hero);
+    transform-origin: left;
+    transform: scaleX(0);
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.step {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    transition: border-color 0.3s, transform 0.3s;
+}
+
+.step:hover {
+    border-color: rgba(79, 142, 247, 0.3);
+    transform: translateY(-4px);
+}
+
+.stepTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.stepNum {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent-blue);
+    letter-spacing: 1px;
+}
+
+.stepDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 2px solid var(--border);
+    transition: border-color 0.3s, background 0.3s;
+}
+
+.step:hover .stepDot {
+    border-color: var(--accent-blue);
+    background: rgba(79, 142, 247, 0.3);
+    box-shadow: 0 0 10px rgba(79, 142, 247, 0.4);
+}
+
+.stepIcon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    line-height: 1;
+}
+
+.stepTitle {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 12px;
+}
+
+.stepDesc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.delivrable {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    border-top: 1px dashed var(--border);
+    padding-top: 16px;
+}
+
+.delivrableIcon {
+    color: var(--accent-blue);
+    font-style: normal;
+}
+
+@media (max-width: 1024px) {
+    .steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .progressLine {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .section {
+        padding: 80px 0;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+    }
+}

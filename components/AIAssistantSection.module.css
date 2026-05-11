@@ -1,0 +1,67 @@
+.section {
+    padding: 100px 0;
+    background-color: var(--bg-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.titleWrapper {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.chatContainer {
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 600px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.webchat {
+    width: 100%;
+    height: 100%;
+}
+
+/* Custom styling for Botpress elements scoped to the container */
+.chatContainer :global(#webchat .bpWebchat) {
+    position: unset !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    border: none !important;
+}
+
+.chatContainer :global(#webchat .bpFab) {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .section {
+        padding: 60px 0;
+    }
+
+    .chatContainer {
+        height: 500px;
+        border-radius: 16px;
+    }
+}
