@@ -107,6 +107,7 @@
     line-height: 0.95;
     margin-bottom: 28px;
     opacity: 0;
+    text-shadow: 0 0 40px rgba(79, 142, 247, 0.1);
 }
 
 .tags {
@@ -114,20 +115,29 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 28px;
+    gap: 16px;
+    margin-bottom: 32px;
     opacity: 0;
 }
 
 .tag {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
     font-weight: 500;
+    padding: 8px 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s;
 }
 
-.tagSep {
-    color: var(--text-muted);
-    font-size: 14px;
+.tag:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    color: var(--text-primary);
 }
 
 .description {
@@ -195,6 +205,26 @@
 .ctaSecondary:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.ctaDownload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: rgba(79, 142, 247, 0.05);
+    color: var(--text-primary);
+    border: 1px solid rgba(79, 142, 247, 0.3);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.ctaDownload:hover {
+    background: rgba(79, 142, 247, 0.1);
+    border-color: rgba(79, 142, 247, 0.5);
     transform: translateY(-2px);
 }
 

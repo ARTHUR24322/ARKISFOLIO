@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { getAdminFromCookie } from '../../../lib/auth';
 import { validateFile } from '../../../lib/upload';
 import { supabase } from '../../../lib/supabase';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -62,19 +60,22 @@ export async function POST(request) {
             const error = validateFile(file);
             if (error) return NextResponse.json({ error }, { status: 400 });
 
-            const bytes = await file.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-
             const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-            const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'projects');
-            const filePath = path.join(uploadDir, fileName);
 
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('projects')
+                .upload(fileName, file);
+
+            if (uploadError) {
+                console.error('Error uploading to Supabase Storage:', uploadError);
+                return NextResponse.json({ error: 'Erreur lors du téléchargement du média' }, { status: 500 });
             }
 
-            fs.writeFileSync(filePath, buffer);
-            mediaUrl = `/uploads/projects/${fileName}`;
+            const { data: { publicUrl } } = supabase.storage
+                .from('projects')
+                .getPublicUrl(fileName);
+
+            mediaUrl = publicUrl;
         }
 
         const id = Date.now().toString();
@@ -139,28 +140,24 @@ export async function PUT(request) {
             const error = validateFile(file);
             if (error) return NextResponse.json({ error }, { status: 400 });
 
-            const bytes = await file.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-
             const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-            const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'projects');
-            const filePath = path.join(uploadDir, fileName);
 
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('projects')
+                .upload(fileName, file);
+
+            if (uploadError) {
+                console.error('Error uploading to Supabase Storage:', uploadError);
+                return NextResponse.json({ error: 'Erreur lors du téléchargement du média' }, { status: 500 });
             }
 
-            fs.writeFileSync(filePath, buffer);
+            const { data: { publicUrl } } = supabase.storage
+                .from('projects')
+                .getPublicUrl(fileName);
 
-            // Optional: delete old media if it exists
-            if (existingProject.media_url) {
-                const oldPath = path.join(process.cwd(), 'public', existingProject.media_url);
-                if (fs.existsSync(oldPath)) {
-                    try { fs.unlinkSync(oldPath); } catch (e) {}
-                }
-            }
-
-            updateData.media_url = `/uploads/projects/${fileName}`;
+            // Optional: delete old media from Supabase Storage here if needed
+            
+            updateData.media_url = publicUrl;
         }
 
         updateData.updated_at = new Date().toISOString();

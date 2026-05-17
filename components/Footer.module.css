@@ -69,6 +69,24 @@
     background: rgba(255, 255, 255, 0.04);
 }
 
+.socials {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+    justify-content: center;
+}
+
+.socialLink {
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.socialLink:hover {
+    color: var(--text-primary);
+}
+
 .bottom {
     display: flex;
     justify-content: space-between;

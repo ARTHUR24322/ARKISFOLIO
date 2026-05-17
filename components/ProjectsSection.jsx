@@ -134,11 +134,15 @@ export default function ProjectsSection() {
                             style={{ '--project-accent': project.accent }}
                         >
                             <div className={styles.cardImage} style={{ background: project.gradient }}>
+                                <div className={styles.imageGlow} />
                                 <span className={styles.cardEmoji}>{project.emoji}</span>
                                 <span className={styles.cardBadge}>{project.category}</span>
                             </div>
                             <div className={styles.cardBody}>
-                                <h3 className={styles.cardTitle}>{project.title}</h3>
+                                <div className={styles.cardHeader}>
+                                    <h3 className={styles.cardTitle}>{project.title}</h3>
+                                    <span className={styles.projectNumber}>0{i + 1}</span>
+                                </div>
                                 <p className={styles.problem}>
                                     <strong>Problème :</strong> {project.problem}
                                 </p>

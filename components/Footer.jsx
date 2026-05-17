@@ -36,6 +36,14 @@ export default function Footer() {
                     </nav>
                 </div>
 
+                <div className={styles.socials}>
+                    <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>GitHub</a>
+                    <a href="https://youtube.com/@yourchannel" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>YouTube</a>
+                    <a href="https://tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>TikTok</a>
+                    <a href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>Facebook</a>
+                    <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>LinkedIn</a>
+                </div>
+
                 <div className={styles.bottom}>
                     <p className={styles.copy}>© 2024 Arthur Kisumbule. Tous droits réservés.</p>
                     <p className={styles.copy}>Conçu & développé avec ✦ par Arthur Kisumbule</p>

@@ -48,18 +48,33 @@ export default function Navbar() {
                 </a>
 
                 <ul className={`${styles.links} ${menuOpen ? styles.open : ''}`}>
-                    {navLinks.map((link) => (
-                        <li key={link.href}>
+                    <div className={styles.menuHeader}>
+                        <span className={styles.menuLabel}>Navigation</span>
+                        <div className={styles.menuLine} />
+                    </div>
+                    {navLinks.map((link, index) => (
+                        <li key={link.href} style={{ '--index': index }}>
                             <a href={link.href} onClick={(e) => handleLink(e, link.href)} className={styles.link}>
-                                {link.label}
+                                <span className={styles.linkNumber}>0{index + 1}.</span>
+                                <span className={styles.linkLabel}>{link.label}</span>
                             </a>
                         </li>
                     ))}
-                    <li>
+                    <li style={{ '--index': navLinks.length }}>
                         <a href="#contact" onClick={(e) => handleLink(e, '#contact')} className={styles.cta}>
                             Contact
                         </a>
                     </li>
+                    <div className={styles.menuFooter}>
+                        <div className={styles.socials}>
+                            <a href="https://linkedin.com/in/arthur-kisumbule-1b5416301" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>LN</a>
+                            <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>GH</a>
+                            <a href="https://youtube.com/@yourchannel" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>YT</a>
+                            <a href="https://tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>TK</a>
+                            <a href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>FB</a>
+                        </div>
+                        <p className={styles.legal}>© 2026 ARKIS STUDIO</p>
+                    </div>
                 </ul>
 
                 <ThemeToggle />

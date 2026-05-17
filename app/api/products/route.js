@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { getAdminFromCookie } from '../../../lib/auth';
 import { validateFile } from '../../../lib/upload';
 import { supabase } from '../../../lib/supabase';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -66,19 +64,22 @@ export async function POST(request) {
             const error = validateFile(file);
             if (error) return NextResponse.json({ error }, { status: 400 });
 
-            const bytes = await file.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-
             const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-            const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'products');
-            const filePath = path.join(uploadDir, fileName);
+            
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('products')
+                .upload(fileName, file);
 
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
+            if (uploadError) {
+                console.error('Error uploading to Supabase Storage:', uploadError);
+                return NextResponse.json({ error: 'Erreur lors du téléchargement de l’image' }, { status: 500 });
             }
 
-            fs.writeFileSync(filePath, buffer);
-            imageUrl = `/uploads/products/${fileName}`;
+            const { data: { publicUrl } } = supabase.storage
+                .from('products')
+                .getPublicUrl(fileName);
+                
+            imageUrl = publicUrl;
         }
 
         const id = Date.now().toString();
@@ -151,28 +152,25 @@ export async function PUT(request) {
             const error = validateFile(file);
             if (error) return NextResponse.json({ error }, { status: 400 });
 
-            const bytes = await file.arrayBuffer();
-            const buffer = Buffer.from(bytes);
-
             const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-            const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'products');
-            const filePath = path.join(uploadDir, fileName);
 
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('products')
+                .upload(fileName, file);
+
+            if (uploadError) {
+                console.error('Error uploading to Supabase Storage:', uploadError);
+                return NextResponse.json({ error: 'Erreur lors du téléchargement de l’image' }, { status: 500 });
             }
 
-            fs.writeFileSync(filePath, buffer);
+            const { data: { publicUrl } } = supabase.storage
+                .from('products')
+                .getPublicUrl(fileName);
 
-            // Optional: delete old image if it exists
-            if (existingProduct.image_url) {
-                const oldPath = path.join(process.cwd(), 'public', existingProduct.image_url);
-                if (fs.existsSync(oldPath)) {
-                    try { fs.unlinkSync(oldPath); } catch (e) {}
-                }
-            }
-
-            updateData.image_url = `/uploads/products/${fileName}`;
+            // Optional: You might want to delete the old image from Supabase Storage here,
+            // but that requires extracting the fileName from the old URL.
+            
+            updateData.image_url = publicUrl;
         }
 
         updateData.updated_at = new Date().toISOString();

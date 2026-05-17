@@ -58,6 +58,62 @@ export default function ContactSection() {
                             </div>
                             <span className={styles.cardArrow}>→</span>
                         </a>
+
+                        <a
+                            href="https://github.com/yourusername"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.card}
+                        >
+                            <div className={styles.cardIcon}>🚀</div>
+                            <div className={styles.cardBody}>
+                                <span className={styles.cardLabel}>GitHub</span>
+                                <span className={styles.cardValue}>@votre-pseudo</span>
+                            </div>
+                            <span className={styles.cardArrow}>→</span>
+                        </a>
+
+                        <a
+                            href="https://youtube.com/@yourchannel"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.card}
+                        >
+                            <div className={styles.cardIcon}>🎬</div>
+                            <div className={styles.cardBody}>
+                                <span className={styles.cardLabel}>YouTube</span>
+                                <span className={styles.cardValue}>@votre-chaine</span>
+                            </div>
+                            <span className={styles.cardArrow}>→</span>
+                        </a>
+
+                        <a
+                            href="https://tiktok.com/@yourusername"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.card}
+                        >
+                            <div className={styles.cardIcon}>📱</div>
+                            <div className={styles.cardBody}>
+                                <span className={styles.cardLabel}>TikTok</span>
+                                <span className={styles.cardValue}>@votre-pseudo</span>
+                            </div>
+                            <span className={styles.cardArrow}>→</span>
+                        </a>
+
+                        <a
+                            href="https://facebook.com/yourprofile"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.card}
+                        >
+                            <div className={styles.cardIcon}>👥</div>
+                            <div className={styles.cardBody}>
+                                <span className={styles.cardLabel}>Facebook</span>
+                                <span className={styles.cardValue}>votre-nom</span>
+                            </div>
+                            <span className={styles.cardArrow}>→</span>
+                        </a>
                     </div>
 
                     <div className={styles.ctas}>

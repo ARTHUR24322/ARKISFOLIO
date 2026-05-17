@@ -32,8 +32,8 @@ export async function POST(request) {
         }]);
 
         if (error) {
-            console.error('Error saving message:', error);
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            console.error('Supabase error saving message:', error.message, error.details, error.hint);
+            return NextResponse.json({ error: error.message || 'Erreur lors de la sauvegarde en base de données' }, { status: 500 });
         }
 
         return NextResponse.json({ success: true, message: 'Message envoyé avec succès' });

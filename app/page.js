@@ -6,7 +6,10 @@ import ProcessSection from '../components/ProcessSection';
 import SkillsSection from '../components/SkillsSection';
 import RealisationsSection from '../components/RealisationsSection';
 import ShopSection from '../components/ShopSection';
+import TestimonialsSection from '../components/TestimonialsSection';
+import FAQSection from '../components/FAQSection';
 import ContactForm from '../components/ContactForm';
+import NewsletterSection from '../components/NewsletterSection';
 import Footer from '../components/Footer';
 import LenisProvider from '../components/LenisProvider';
 
@@ -21,8 +24,11 @@ export default function Home() {
             <ShopSection />
             <SolutionsSection />
             <ProcessSection />
+            <TestimonialsSection />
             <SkillsSection />
+            <FAQSection />
             <ContactForm />
+            <NewsletterSection />
             <Footer />
         </main>
     );
