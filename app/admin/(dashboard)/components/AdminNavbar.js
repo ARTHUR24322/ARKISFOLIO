@@ -7,6 +7,7 @@ const links = [
     { href: '/admin/projects', label: 'Projets' },
     { href: '/admin/shop', label: 'Boutique' },
     { href: '/admin/messages', label: 'Messages' },
+    { href: '/admin/cv', label: 'Gestion CV' },
 ];
 
 export default function AdminNavbar() {

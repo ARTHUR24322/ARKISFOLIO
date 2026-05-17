@@ -24,7 +24,7 @@ export default function Home() {
             <ShopSection />
             <SolutionsSection />
             <ProcessSection />
-            <TestimonialsSection />
+            {/* <TestimonialsSection /> - Masqué temporairement car pas d'avis pour le moment */}
             <SkillsSection />
             <FAQSection />
             <ContactForm />

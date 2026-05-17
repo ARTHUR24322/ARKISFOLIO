@@ -30,3 +30,7 @@ export const messageSchema = z.object({
   message: z.string().min(30, "Veuillez préciser votre demande (minimum 30 caractères)").max(5000, "Le message est trop long"),
 });
 
+export type AuthPayload = z.infer<typeof authSchema>;
+export type AnalyticsPayload = z.infer<typeof analyticsSchema>;
+export type PaymentPayload = z.infer<typeof paymentSchema>;
+export type MessageFormData = z.infer<typeof messageSchema>;

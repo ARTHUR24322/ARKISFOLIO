@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { getAdminFromCookie } from '../../../lib/auth';
 import { rateLimit, getClientIp } from '../../../lib/rate-limit';
 import { supabase } from '../../../lib/supabase';
 import { messageSchema } from '../../../lib/validation';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
     // Rate Limit: 3 messages per 10 minutes per IP
     const ip = getClientIp(request);
     if (!rateLimit(`msg_${ip}`, 3, 600000)) {
@@ -43,7 +43,7 @@ export async function POST(request) {
     }
 }
 
-export async function GET(request) {
+export async function GET(request: NextRequest) {
     const admin = await getAdminFromCookie();
     if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
@@ -60,7 +60,7 @@ export async function GET(request) {
     return NextResponse.json(messages);
 }
 
-export async function PATCH(request) {
+export async function PATCH(request: NextRequest) {
     const admin = await getAdminFromCookie();
     if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
@@ -80,7 +80,7 @@ export async function PATCH(request) {
     }
 }
 
-export async function DELETE(request) {
+export async function DELETE(request: NextRequest) {
     const admin = await getAdminFromCookie();
     if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 

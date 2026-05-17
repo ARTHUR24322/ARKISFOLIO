@@ -1,46 +1,43 @@
 'use client';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { messageSchema, type MessageFormData } from '../lib/validation';
 import styles from './ContactForm.module.css';
 
 export default function ContactForm() {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-    const [status, setStatus] = useState({ loading: false, success: false, error: null });
+    const [status, setStatus] = useState({ success: false, error: null as string | null });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setStatus({ loading: true, success: false, error: null });
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<MessageFormData>({
+        resolver: zodResolver(messageSchema),
+        defaultValues: { name: '', email: '', message: '' }
+    });
+
+    const onSubmit = async (data: MessageFormData) => {
+        setStatus({ success: false, error: null });
 
         try {
             const res = await fetch('/api/messages', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(data),
             });
 
             if (res.ok) {
-                setStatus({ loading: false, success: true, error: null });
-                setFormData({ name: '', email: '', message: '' });
-                // Reset success message after 5 seconds
+                setStatus({ success: true, error: null });
+                reset(); // Vide le formulaire
                 setTimeout(() => setStatus(s => ({ ...s, success: false })), 5000);
             } else {
-                const data = await res.json();
-                let errorMessage = data.error || 'Erreur lors de l\'envoi';
-                
-                // Handle zod specific validation errors
-                if (data.details) {
-                    if (data.details.message?._errors?.length > 0) {
-                        errorMessage = data.details.message._errors[0];
-                    } else if (data.details.name?._errors?.length > 0) {
-                        errorMessage = data.details.name._errors[0];
-                    } else if (data.details.email?._errors?.length > 0) {
-                        errorMessage = data.details.email._errors[0];
-                    }
-                }
-                
-                setStatus({ loading: false, success: false, error: errorMessage });
+                const resData = await res.json();
+                setStatus({ success: false, error: resData.error || 'Erreur lors de l\'envoi' });
             }
         } catch (err) {
-            setStatus({ loading: false, success: false, error: 'Erreur de connexion au serveur' });
+            setStatus({ success: false, error: 'Erreur de connexion au serveur' });
         }
     };
 
@@ -66,48 +63,42 @@ export default function ContactForm() {
                                     </button>
                                 </div>
                             ) : (
-                                <form className={styles.form} onSubmit={handleSubmit} id="contact-form">
+                                <form className={styles.form} onSubmit={handleSubmit(onSubmit)} id="contact-form">
                                     <div className={styles.field}>
                                         <label htmlFor="name">Nom complet</label>
                                         <input
                                             id="name"
                                             type="text"
                                             placeholder="Votre nom"
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            required
-                                            minLength={2}
+                                            {...register("name")}
                                         />
+                                        {errors.name && <p className={styles.error} role="alert">{errors.name.message}</p>}
                                     </div>
                                     <div className={styles.field}>
                                         <label htmlFor="email">Email</label>
                                         <input
                                             id="email"
                                             type="email"
-                                            placeholder="vorte@email.com"
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            required
+                                            placeholder="votre@email.com"
+                                            {...register("email")}
                                         />
+                                        {errors.email && <p className={styles.error} role="alert">{errors.email.message}</p>}
                                     </div>
                                     <div className={styles.field}>
                                         <label htmlFor="message">Message</label>
                                         <textarea
                                             id="message"
                                             placeholder="Comment puis-je vous aider ?"
-                                            rows="4"
-                                            value={formData.message}
-                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                            required
-                                            minLength={30}
-                                            maxLength={5000}
+                                            rows={4}
+                                            {...register("message")}
                                         ></textarea>
+                                        {errors.message && <p className={styles.error} role="alert">{errors.message.message}</p>}
                                     </div>
 
                                     {status.error && <p className={styles.error} role="alert">{status.error}</p>}
 
-                                    <button type="submit" className={styles.submitBtn} disabled={status.loading}>
-                                        {status.loading ? 'Envoi en cours...' : 'Envoyer mon message'}
+                                    <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
+                                        {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon message'}
                                         <span className={styles.btnIcon}>✉</span>
                                     </button>
                                 </form>
