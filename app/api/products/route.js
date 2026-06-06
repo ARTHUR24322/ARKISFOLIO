@@ -39,7 +39,7 @@ export async function POST(request) {
 
     try {
         const formData = await request.formData();
-        const name = formData.get('name');
+        const title = formData.get('title') || formData.get('name');
         const description = formData.get('description');
         const price = parseFloat(formData.get('price'));
         const category = formData.get('category');
@@ -62,7 +62,7 @@ export async function POST(request) {
         const product = await prisma.product.create({
             data: {
                 id: Date.now().toString(),
-                name,
+                title,
                 description,
                 price,
                 category,
@@ -88,7 +88,7 @@ export async function PUT(request) {
         if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
         const updateData = {};
-        if (formData.has('name')) updateData.name = formData.get('name');
+        if (formData.has('title') || formData.has('name')) updateData.title = formData.get('title') || formData.get('name');
         if (formData.has('description')) updateData.description = formData.get('description');
         if (formData.has('price')) updateData.price = parseFloat(formData.get('price'));
         if (formData.has('category')) updateData.category = formData.get('category');
