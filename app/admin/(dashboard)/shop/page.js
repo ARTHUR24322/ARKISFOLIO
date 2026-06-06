@@ -19,7 +19,12 @@ export default function AdminShop() {
         try {
             const res = await fetch('/api/products?all=true');
             const data = await res.json();
-            setProducts(data);
+            if (Array.isArray(data)) {
+                setProducts(data);
+            } else {
+                console.error('API Error:', data);
+                alert(data.error || 'Erreur lors du chargement des produits');
+            }
         } catch (err) {
             alert('Erreur lors du chargement des produits');
         } finally {
@@ -201,7 +206,7 @@ export default function AdminShop() {
             <div className={styles.grid}>
                 {loading ? (
                     <p>Chargement...</p>
-                ) : (
+                ) : Array.isArray(products) && products.length > 0 ? (
                     products.map(p => (
                         <div key={p.id} className={styles.itemCard}>
                             <div className={styles.itemMain}>
@@ -220,6 +225,8 @@ export default function AdminShop() {
                             </div>
                         </div>
                     ))
+                ) : (
+                    <p>{loading ? '' : products && products.length === 0 ? 'Aucun produit trouvé.' : 'Erreur lors du chargement.'}</p>
                 )}
             </div>
         </div>

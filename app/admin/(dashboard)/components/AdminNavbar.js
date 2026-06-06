@@ -5,6 +5,7 @@ import styles from './AdminNavbar.module.css';
 const links = [
     { href: '/admin', label: 'Dashboard' },
     { href: '/admin/projects', label: 'Projets' },
+    { href: '/admin/apps', label: 'Applications' },
     { href: '/admin/shop', label: 'Boutique' },
     { href: '/admin/messages', label: 'Messages' },
     { href: '/admin/cv', label: 'Gestion CV' },

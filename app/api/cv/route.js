@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { getAdminFromCookie } from '../../../lib/auth';
 import { validateFile } from '../../../lib/upload';
+import { supabase } from '../../../lib/supabase';
 
 export async function POST(request) {
     const admin = await getAdminFromCookie();
@@ -17,28 +16,34 @@ export async function POST(request) {
         }
 
         // We only allow PDFs for CV
-        const error = validateFile(file, { allowedExtensions: ['pdf'], maxSizeMB: 5 });
-        if (error) return NextResponse.json({ error }, { status: 400 });
+        const validationError = validateFile(file, { allowedExtensions: ['pdf'], maxSizeMB: 5 });
+        if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
 
-        const buffer = Buffer.from(await file.arrayBuffer());
-        
-        // Target path: public/cv_arthur_kisumbule.pdf
-        const publicDir = path.join(process.cwd(), 'public');
-        const filePath = path.join(publicDir, 'cv_arthur_kisumbule.pdf');
+        const fileName = 'cv_arthur_kisumbule.pdf';
 
-        // Ensure public dir exists (it is standard Next.js, but just in case)
-        try {
-            await fs.access(publicDir);
-        } catch {
-            await fs.mkdir(publicDir, { recursive: true });
+        // Upload to Supabase Storage (bucket 'cv')
+        // We use upsert: true to replace the existing file
+        const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('cv')
+            .upload(fileName, file, {
+                upsert: true,
+                contentType: 'application/pdf',
+                cacheControl: '3600' // Better cache management
+            });
+
+        if (uploadError) {
+            console.error('Error uploading CV to Supabase:', uploadError);
+            return NextResponse.json({ error: 'Erreur lors du transfert vers le stockage cloud: ' + uploadError.message }, { status: 500 });
         }
 
-        // Write the file (overwrites the existing one)
-        await fs.writeFile(filePath, buffer);
-
-        return NextResponse.json({ success: true, message: 'CV mis à jour avec succès' });
+        return NextResponse.json({ 
+            success: true, 
+            message: 'CV mis à jour avec succès sur le cloud',
+            path: uploadData.path
+        });
     } catch (error) {
         console.error('Error uploading CV:', error);
         return NextResponse.json({ error: 'Erreur lors de la mise à jour du CV' }, { status: 500 });
     }
 }
+

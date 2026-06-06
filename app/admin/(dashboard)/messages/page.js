@@ -15,9 +15,15 @@ export default function AdminMessages() {
         try {
             const res = await fetch('/api/messages');
             const data = await res.json();
-            setMessages(data);
+            if (Array.isArray(data)) {
+                setMessages(data);
+            } else {
+                console.error('API Error:', data);
+                setMessages([]);
+            }
         } catch (err) {
             console.error(err);
+            setMessages([]);
         } finally {
             setLoading(false);
         }

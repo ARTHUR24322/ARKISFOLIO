@@ -1,38 +1,36 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getAdminFromCookie } from '../../../lib/auth';
 import { validateFile } from '../../../lib/upload';
 import { supabase } from '../../../lib/supabase';
+import prisma from '../../../lib/prisma';
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const all = searchParams.get('all');
 
-    let query = supabase.from('products').select('*');
+    try {
+        if (all === 'true') {
+            const admin = await getAdminFromCookie();
+            if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
+        }
 
-    if (all !== 'true') {
-        query = query.eq('published', true);
-    } else {
-        const admin = await getAdminFromCookie();
-        if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
-    }
+        let products;
+        if (all === 'true') {
+            products = await prisma.product.findMany({
+                orderBy: { created_at: 'desc' }
+            });
+        } else {
+            products = await prisma.product.findMany({
+                where: { stock: { gt: 0 } },
+                orderBy: { created_at: 'desc' }
+            });
+        }
 
-    const { data: products, error } = await query.order('created_at', { ascending: false });
-
-    if (error) {
-        console.error('Error fetching products:', error);
+        return NextResponse.json(products);
+    } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    // Map database fields to frontend fields if necessary
-    const mappedProducts = products.map(p => ({
-        ...p,
-        imageUrl: p.image_url,
-        externalLink: p.external_link,
-        updatedAt: p.updated_at,
-        createdAt: p.created_at
-    }));
-
-    return NextResponse.json(mappedProducts);
 }
 
 export async function POST(request) {
@@ -41,21 +39,12 @@ export async function POST(request) {
 
     try {
         const formData = await request.formData();
-
-        const type = formData.get('type') || 'template';
-        const badge = formData.get('badge') || '🆕 Nouveau';
-        const title = formData.get('title') || 'Nouveau produit';
-        const description = formData.get('description') || '';
-        const price = Number(formData.get('price')) || 0;
-        const currency = formData.get('currency') || '€';
-        const gradient = formData.get('gradient') || 'linear-gradient(135deg, #1a1a4e 0%, #0f0f2e 100%)';
-        const accent = formData.get('accent') || '#4F8EF7';
-        const emoji = formData.get('emoji') || '🚀';
-        const externalLink = formData.get('externalLink') || '';
-        const features = formData.get('features') ? JSON.parse(formData.get('features')) : [];
-        const cta = formData.get('cta') || 'Acheter';
-        const published = formData.get('published') === 'true';
-        const featured = formData.get('featured') === 'true';
+        const name = formData.get('name');
+        const description = formData.get('description');
+        const price = parseFloat(formData.get('price'));
+        const category = formData.get('category');
+        const stock = parseInt(formData.get('stock')) || 0;
+        const digitalLink = formData.get('digitalLink') || '';
 
         let imageUrl = '';
         const file = formData.get('image');
@@ -64,54 +53,28 @@ export async function POST(request) {
             const error = validateFile(file);
             if (error) return NextResponse.json({ error }, { status: 400 });
 
-            const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-            
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('products')
-                .upload(fileName, file);
-
-            if (uploadError) {
-                console.error('Error uploading to Supabase Storage:', uploadError);
-                return NextResponse.json({ error: 'Erreur lors du téléchargement de l’image' }, { status: 500 });
-            }
-
-            const { data: { publicUrl } } = supabase.storage
-                .from('products')
-                .getPublicUrl(fileName);
-                
+            const fileName = `prod-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+            await supabase.storage.from('products').upload(fileName, file);
+            const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(fileName);
             imageUrl = publicUrl;
         }
 
-        const id = Date.now().toString();
-        const { data: newProduct, error } = await supabase.from('products').insert([{
-            id,
-            type,
-            badge,
-            title,
-            description,
-            price,
-            currency,
-            gradient,
-            accent,
-            emoji,
-            features,
-            cta,
-            published,
-            featured,
-            image_url: imageUrl,
-            external_link: externalLink,
-            created_at: new Date().toISOString()
-        }]).select().single();
+        const product = await prisma.product.create({
+            data: {
+                id: Date.now().toString(),
+                name,
+                description,
+                price,
+                category,
+                stock,
+                digital_link: digitalLink,
+                image_url: imageUrl,
+            }
+        });
 
-        if (error) {
-            console.error('Error creating product:', error);
-            return NextResponse.json({ error: error.message }, { status: 500 });
-        }
-
-        return NextResponse.json(newProduct, { status: 201 });
+        return NextResponse.json(product, { status: 201 });
     } catch (error) {
-        console.error('Error creating product:', error);
-        return NextResponse.json({ error: 'Erreur lors de la création du produit' }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
@@ -122,75 +85,32 @@ export async function PUT(request) {
     try {
         const formData = await request.formData();
         const id = formData.get('id');
-
         if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
-        const { data: existingProduct, error: fetchError } = await supabase.from('products').select('*').eq('id', id).single();
-
-        if (fetchError || !existingProduct) {
-            return NextResponse.json({ error: 'Produit non trouvé' }, { status: 404 });
-        }
-
         const updateData = {};
-        if (formData.has('title')) updateData.title = formData.get('title');
-        if (formData.has('type')) updateData.type = formData.get('type');
-        if (formData.has('badge')) updateData.badge = formData.get('badge');
+        if (formData.has('name')) updateData.name = formData.get('name');
         if (formData.has('description')) updateData.description = formData.get('description');
-        if (formData.has('price')) updateData.price = Number(formData.get('price'));
-        if (formData.has('currency')) updateData.currency = formData.get('currency');
-        if (formData.has('gradient')) updateData.gradient = formData.get('gradient');
-        if (formData.has('accent')) updateData.accent = formData.get('accent');
-        if (formData.has('emoji')) updateData.emoji = formData.get('emoji');
-        if (formData.has('features')) updateData.features = JSON.parse(formData.get('features'));
-        if (formData.has('cta')) updateData.cta = formData.get('cta');
-        if (formData.has('published')) updateData.published = formData.get('published') === 'true';
-        if (formData.has('featured')) updateData.featured = formData.get('featured') === 'true';
-        if (formData.has('externalLink')) updateData.external_link = formData.get('externalLink');
+        if (formData.has('price')) updateData.price = parseFloat(formData.get('price'));
+        if (formData.has('category')) updateData.category = formData.get('category');
+        if (formData.has('stock')) updateData.stock = parseInt(formData.get('stock'));
+        if (formData.has('digitalLink')) updateData.digital_link = formData.get('digitalLink');
 
         const file = formData.get('image');
         if (file && typeof file !== 'string' && file.size > 0) {
-            const error = validateFile(file);
-            if (error) return NextResponse.json({ error }, { status: 400 });
-
-            const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('products')
-                .upload(fileName, file);
-
-            if (uploadError) {
-                console.error('Error uploading to Supabase Storage:', uploadError);
-                return NextResponse.json({ error: 'Erreur lors du téléchargement de l’image' }, { status: 500 });
-            }
-
-            const { data: { publicUrl } } = supabase.storage
-                .from('products')
-                .getPublicUrl(fileName);
-
-            // Optional: You might want to delete the old image from Supabase Storage here,
-            // but that requires extracting the fileName from the old URL.
-            
+            const fileName = `prod-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+            await supabase.storage.from('products').upload(fileName, file);
+            const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(fileName);
             updateData.image_url = publicUrl;
         }
 
-        updateData.updated_at = new Date().toISOString();
+        const product = await prisma.product.update({
+            where: { id },
+            data: updateData
+        });
 
-        const { data: updatedProduct, error: updateError } = await supabase
-            .from('products')
-            .update(updateData)
-            .eq('id', id)
-            .select()
-            .single();
-
-        if (updateError) {
-            console.error('Error updating product:', updateError);
-            return NextResponse.json({ error: updateError.message }, { status: 500 });
-        }
-
-        return NextResponse.json(updatedProduct);
+        return NextResponse.json(product);
     } catch (error) {
-        console.error('Error updating product:', error);
-        return NextResponse.json({ error: 'Erreur lors de la modification du produit' }, { status: 500 });
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
 
@@ -200,14 +120,14 @@ export async function DELETE(request) {
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-
     if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
-    const { error } = await supabase.from('products').delete().eq('id', id);
-
-    if (error) {
+    try {
+        await prisma.product.delete({
+            where: { id }
+        });
+        return NextResponse.json({ success: true });
+    } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
-
-    return NextResponse.json({ success: true });
 }

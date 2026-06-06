@@ -3,28 +3,31 @@ import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
 export default function AdminDashboard() {
-    const [stats, setStats] = useState({ projects: 0, products: 0, messages: 0 });
+    const [stats, setStats] = useState({ projects: 0, products: 0, apps: 0, messages: 0 });
     const [analytics, setAnalytics] = useState({ visits: 0, clicks: 0, revenue: 0 });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const [pRes, prRes, mRes, aRes] = await Promise.all([
+                const [pRes, prRes, aRes, mRes, anRes] = await Promise.all([
                     fetch('/api/projects?all=true'),
                     fetch('/api/products?all=true'),
+                    fetch('/api/web-apps?all=true'),
                     fetch('/api/messages'),
                     fetch('/api/analytics')
                 ]);
 
                 const projects = await pRes.json();
                 const products = await prRes.json();
+                const apps = await aRes.json();
                 const messages = await mRes.json();
-                const analyticsData = await aRes.json();
+                const analyticsData = await anRes.json();
 
                 setStats({
                     projects: Array.isArray(projects) ? projects.length : 0,
                     products: Array.isArray(products) ? products.length : 0,
+                    apps: Array.isArray(apps) ? apps.length : 0,
                     messages: Array.isArray(messages) ? messages.filter(m => !m.read).length : 0
                 });
                 setAnalytics(analyticsData);
@@ -52,9 +55,14 @@ export default function AdminDashboard() {
                     <div className={styles.statIcon}>🚀</div>
                 </div>
                 <div className={styles.statCard}>
-                    <span className={styles.statLabel}>Produits boutique</span>
+                    <span className={styles.statLabel}>Boutique</span>
                     <span className={styles.statValue}>{loading ? '...' : stats.products}</span>
                     <div className={styles.statIcon}>🛍️</div>
+                </div>
+                <div className={styles.statCard}>
+                    <span className={styles.statLabel}>Apps Web</span>
+                    <span className={styles.statValue}>{loading ? '...' : stats.apps}</span>
+                    <div className={styles.statIcon}>🛠️</div>
                 </div>
                 <div className={styles.statCard}>
                     <span className={styles.statLabel}>Messages non lus</span>

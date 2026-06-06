@@ -17,10 +17,19 @@ export default function RealisationsSection() {
         fetch('/api/projects')
             .then(res => res.json())
             .then(data => {
-                setRealisations(data);
+                if (Array.isArray(data)) {
+                    setRealisations(data);
+                } else {
+                    console.error('Data is not an array:', data);
+                    setRealisations([]);
+                }
                 setLoading(false);
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error(err);
+                setLoading(false);
+                setRealisations([]);
+            });
     }, []);
 
     const filtered = active === 'Tous' ? realisations : realisations.filter((r) => r.category === active);

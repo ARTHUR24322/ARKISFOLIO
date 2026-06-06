@@ -19,7 +19,12 @@ export default function AdminProjects() {
         try {
             const res = await fetch('/api/projects?all=true');
             const data = await res.json();
-            setProjects(data);
+            if (Array.isArray(data)) {
+                setProjects(data);
+            } else {
+                console.error('API Error:', data);
+                alert(data.error || 'Erreur lors du chargement des projets');
+            }
         } catch (err) {
             alert('Erreur lors du chargement des projets');
         } finally {
@@ -38,6 +43,7 @@ export default function AdminProjects() {
         formData.append('description', currentProject.description);
         formData.append('emoji', currentProject.emoji);
         formData.append('year', currentProject.year);
+        formData.append('liveUrl', currentProject.liveUrl || '#');
         formData.append('published', currentProject.published);
 
         const tags = typeof currentProject.tags === 'string'
@@ -192,6 +198,14 @@ export default function AdminProjects() {
                                     onChange={e => setCurrentProject({ ...currentProject, year: e.target.value })}
                                 />
                             </div>
+                            <div className={styles.f}>
+                                <label>Lien Live</label>
+                                <input
+                                    value={currentProject.liveUrl || ''}
+                                    onChange={e => setCurrentProject({ ...currentProject, liveUrl: e.target.value })}
+                                    placeholder="https://..."
+                                />
+                            </div>
                             <div className={styles.fCheckbox}>
                                 <label>
                                     <input
@@ -215,7 +229,7 @@ export default function AdminProjects() {
             <div className={styles.grid}>
                 {loading ? (
                     <p>Chargement...</p>
-                ) : (
+                ) : Array.isArray(projects) && projects.length > 0 ? (
                     projects.map(p => (
                         <div key={p.id} className={styles.projectCard}>
                             <div className={styles.pInfo}>
@@ -236,6 +250,8 @@ export default function AdminProjects() {
                             </div>
                         </div>
                     ))
+                ) : (
+                    <p>{loading ? '' : projects.length === 0 ? 'Aucun projet trouvé.' : 'Erreur lors du chargement des projets.'}</p>
                 )}
             </div>
         </div>

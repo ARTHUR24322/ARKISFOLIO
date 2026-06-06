@@ -92,7 +92,7 @@ export default function HeroSection() {
                     <a href="#contact" onClick={(e) => handleScroll(e, '#contact')} className={styles.ctaSecondary}>
                         Discuter d'un projet
                     </a>
-                    <a href="/cv_arthur_kisumbule.pdf" target="_blank" rel="noopener noreferrer" className={styles.ctaDownload} aria-label="Télécharger mon CV au format PDF">
+                    <a href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cv/cv_arthur_kisumbule.pdf`} target="_blank" rel="noopener noreferrer" className={styles.ctaDownload} aria-label="Télécharger mon CV au format PDF">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M2 13h12M8 2v8M4 7l4 4 4-4" />
                         </svg>

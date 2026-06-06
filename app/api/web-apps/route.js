@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { getAdminFromCookie } from '../../../lib/auth';
 import { validateFile } from '../../../lib/upload';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '../../../lib/supabase'; // Still needed for Storage
 import prisma from '../../../lib/prisma';
 
 export async function GET(request) {
@@ -15,21 +15,22 @@ export async function GET(request) {
             if (!admin) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
         }
 
-        let projects;
+        let apps;
         if (all === 'true') {
-            projects = await prisma.project.findMany({
+            apps = await prisma.webApp.findMany({
                 orderBy: { created_at: 'desc' }
             });
         } else {
-            projects = await prisma.project.findMany({
+            apps = await prisma.webApp.findMany({
                 where: { published: true },
                 orderBy: { created_at: 'desc' }
             });
         }
 
-        return NextResponse.json(projects);
+        return NextResponse.json(apps);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Prisma Error:', error);
+        return NextResponse.json({ error: 'Erreur lors de la récupération des données' }, { status: 500 });
     }
 }
 
@@ -39,50 +40,51 @@ export async function POST(request) {
 
     try {
         const formData = await request.formData();
-        const title = formData.get('title') || 'Nouveau Projet';
-        const category = formData.get('category') || 'Web';
+        const title = formData.get('title') || 'Nouvelle Application';
         const description = formData.get('description') || '';
+        const url = formData.get('url') || '#';
+        const repo_url = formData.get('repo_url') || '';
+        const status = formData.get('status') || 'Live';
         const emoji = formData.get('emoji') || '🚀';
-        const gradient = formData.get('gradient') || 'linear-gradient(135deg, #1a1a4e 0%, #0f0f2e 100%)';
         const accent = formData.get('accent') || '#4F8EF7';
         const tags = formData.get('tags') ? JSON.parse(formData.get('tags')) : [];
-        const liveUrl = formData.get('liveUrl') || '#';
-        const year = formData.get('year') || new Date().getFullYear().toString();
         const published = formData.get('published') === 'true';
 
-        let mediaUrl = '';
-        const file = formData.get('media');
+        let imageUrl = '';
+        const file = formData.get('image');
 
         if (file && typeof file !== 'string' && file.size > 0) {
             const error = validateFile(file);
             if (error) return NextResponse.json({ error }, { status: 400 });
 
-            const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-            await supabase.storage.from('projects').upload(fileName, file);
+            const fileName = `app-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+            const { error: uploadError } = await supabase.storage.from('projects').upload(fileName, file);
+
+            if (uploadError) return NextResponse.json({ error: 'Erreur Image Cloud' }, { status: 500 });
             const { data: { publicUrl } } = supabase.storage.from('projects').getPublicUrl(fileName);
-            mediaUrl = publicUrl;
+            imageUrl = publicUrl;
         }
 
-        const project = await prisma.project.create({
+        const newApp = await prisma.webApp.create({
             data: {
                 id: Date.now().toString(),
                 title,
-                category,
                 description,
+                url,
+                repo_url,
+                status,
                 emoji,
-                gradient,
                 accent,
                 tags,
-                live_url: liveUrl,
-                year,
                 published,
-                media_url: mediaUrl,
+                image_url: imageUrl,
             }
         });
 
-        return NextResponse.json(project, { status: 201 });
+        return NextResponse.json(newApp, { status: 201 });
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Error creating app:', error);
+        return NextResponse.json({ error: 'Erreur lors de la création' }, { status: 500 });
     }
 }
 
@@ -93,36 +95,36 @@ export async function PUT(request) {
     try {
         const formData = await request.formData();
         const id = formData.get('id');
+
         if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
         const updateData = {};
         if (formData.has('title')) updateData.title = formData.get('title');
-        if (formData.has('category')) updateData.category = formData.get('category');
         if (formData.has('description')) updateData.description = formData.get('description');
+        if (formData.has('url')) updateData.url = formData.get('url');
+        if (formData.has('repo_url')) updateData.repo_url = formData.get('repo_url');
+        if (formData.has('status')) updateData.status = formData.get('status');
         if (formData.has('emoji')) updateData.emoji = formData.get('emoji');
-        if (formData.has('gradient')) updateData.gradient = formData.get('gradient');
         if (formData.has('accent')) updateData.accent = formData.get('accent');
         if (formData.has('tags')) updateData.tags = JSON.parse(formData.get('tags'));
-        if (formData.has('liveUrl')) updateData.live_url = formData.get('liveUrl');
-        if (formData.has('year')) updateData.year = formData.get('year');
         if (formData.has('published')) updateData.published = formData.get('published') === 'true';
 
-        const file = formData.get('media');
+        const file = formData.get('image');
         if (file && typeof file !== 'string' && file.size > 0) {
-            const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+            const fileName = `app-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
             await supabase.storage.from('projects').upload(fileName, file);
             const { data: { publicUrl } } = supabase.storage.from('projects').getPublicUrl(fileName);
-            updateData.media_url = publicUrl;
+            updateData.image_url = publicUrl;
         }
 
-        const project = await prisma.project.update({
+        const updatedApp = await prisma.webApp.update({
             where: { id },
             data: updateData
         });
 
-        return NextResponse.json(project);
+        return NextResponse.json(updatedApp);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: 'Erreur lors de la modification' }, { status: 500 });
     }
 }
 
@@ -132,10 +134,11 @@ export async function DELETE(request) {
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+
     if (!id) return NextResponse.json({ error: 'ID manquant' }, { status: 400 });
 
     try {
-        await prisma.project.delete({
+        await prisma.webApp.delete({
             where: { id }
         });
         return NextResponse.json({ success: true });

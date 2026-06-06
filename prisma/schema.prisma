@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  price        Float
+  category     String
+  image_url    String?
+  stock        Int      @default(0)
+  digital_link String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  description String
+  emoji       String?
+  gradient    String?
+  accent      String?
+  tags        Json?
+  live_url    String?
+  year        String?
+  published   Boolean  @default(true)
+  media_url   String?
+  created_at  DateTime @default(now())
+
+  @@map("projects")
+}
+
+model Message {
+  id      String   @id @default(cuid())
+  name    String
+  email   String
+  message String
+  date    DateTime @default(now())
+  read    Boolean  @default(false)
+
+  @@map("messages")
+}
+
+model Analytics {
+  id      Int    @id @default(1)
+  visits  Int    @default(0)
+  clicks  Int    @default(0)
+  revenue Float  @default(0)
+
+  @@map("analytics")
+}
+
+model RevokedToken {
+  token      String   @id
+  revoked_at DateTime @default(now())
+
+  @@map("revoked_tokens")
+}
+
+model WebApp {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  url         String?
+  repo_url    String?
+  status      String   @default("Live")
+  emoji       String?
+  gradient    String?
+  accent      String?
+  tags        Json?
+  published   Boolean  @default(true)
+  image_url   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("web_apps")
+}
