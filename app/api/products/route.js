@@ -22,7 +22,7 @@ export async function GET(request) {
             });
         } else {
             products = await prisma.product.findMany({
-                where: { stock: { gt: 0 } },
+                where: { published: true },
                 orderBy: { created_at: 'desc' }
             });
         }
@@ -42,9 +42,16 @@ export async function POST(request) {
         const title = formData.get('title') || formData.get('name');
         const description = formData.get('description');
         const price = parseFloat(formData.get('price'));
-        const category = formData.get('category');
-        const stock = parseInt(formData.get('stock')) || 0;
-        const digitalLink = formData.get('digitalLink') || '';
+        const type = formData.get('type') || formData.get('category');
+        const externalLink = formData.get('externalLink') || formData.get('digitalLink') || '';
+        const badge = formData.get('badge') || '';
+        const curency = formData.get('currency') || formData.get('curency') || '€';
+        const gradient = formData.get('gradient') || '';
+        const accent = formData.get('accent') || '';
+        const emoji = formData.get('emoji') || '';
+        const cta = formData.get('cta') || '';
+        const published = formData.get('published') !== 'false';
+        const features = formData.get('features') ? JSON.parse(formData.get('features')) : [];
 
         let imageUrl = '';
         const file = formData.get('image');
@@ -65,10 +72,17 @@ export async function POST(request) {
                 title,
                 description,
                 price,
-                category,
-                stock,
-                digital_link: digitalLink,
-                image_url: imageUrl,
+                type,
+                badge,
+                curency,
+                gradient,
+                accent,
+                emoji,
+                features,
+                cta,
+                published,
+                image_urel: imageUrl,
+                external_link: externalLink,
             }
         });
 
@@ -91,16 +105,23 @@ export async function PUT(request) {
         if (formData.has('title') || formData.has('name')) updateData.title = formData.get('title') || formData.get('name');
         if (formData.has('description')) updateData.description = formData.get('description');
         if (formData.has('price')) updateData.price = parseFloat(formData.get('price'));
-        if (formData.has('category')) updateData.category = formData.get('category');
-        if (formData.has('stock')) updateData.stock = parseInt(formData.get('stock'));
-        if (formData.has('digitalLink')) updateData.digital_link = formData.get('digitalLink');
+        if (formData.has('type') || formData.has('category')) updateData.type = formData.get('type') || formData.get('category');
+        if (formData.has('externalLink') || formData.has('digitalLink')) updateData.external_link = formData.get('externalLink') || formData.get('digitalLink');
+        if (formData.has('badge')) updateData.badge = formData.get('badge');
+        if (formData.has('currency') || formData.has('curency')) updateData.curency = formData.get('currency') || formData.get('curency');
+        if (formData.has('gradient')) updateData.gradient = formData.get('gradient');
+        if (formData.has('accent')) updateData.accent = formData.get('accent');
+        if (formData.has('emoji')) updateData.emoji = formData.get('emoji');
+        if (formData.has('cta')) updateData.cta = formData.get('cta');
+        if (formData.has('published')) updateData.published = formData.get('published') !== 'false';
+        if (formData.has('features')) updateData.features = JSON.parse(formData.get('features'));
 
         const file = formData.get('image');
         if (file && typeof file !== 'string' && file.size > 0) {
             const fileName = `prod-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
             await supabase.storage.from('products').upload(fileName, file);
             const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(fileName);
-            updateData.image_url = publicUrl;
+            updateData.image_urel = publicUrl;
         }
 
         const product = await prisma.product.update({

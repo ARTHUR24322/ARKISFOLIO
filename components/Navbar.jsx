@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from './Navbar.module.css';
-import ThemeToggle from './ThemeToggle';
 
 const navLinks = [
     { href: '#services', label: 'Services' },
@@ -77,7 +76,6 @@ export default function Navbar() {
                     </div>
                 </ul>
 
-                <ThemeToggle />
 
                 <button 
                     className={styles.burger} 
