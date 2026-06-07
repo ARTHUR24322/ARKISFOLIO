@@ -77,8 +77,8 @@ export default function ShopSection() {
             body: JSON.stringify({ type: 'click' }),
         }).catch(() => {});
 
-        if (product.externalLink) {
-            window.open(product.externalLink, '_blank');
+        if (product.external_link) {
+            window.open(product.external_link, '_blank');
             return;
         }
         setPaymentModal({ open: true, product, method: null });
@@ -183,10 +183,10 @@ export default function ShopSection() {
                                 {product.featured && <div className={styles.featuredFlag}>BEST VALUE</div>}
 
                                 <div className={styles.cardTop} style={{ background: product.gradient }}>
-                                    {product.image_urel || product.imageUrl ? (
+                                    {product.image_url || product.imageUrl ? (
                                         <div className={styles.imageWrap}>
                                             <Image 
-                                                src={product.image_urel || product.imageUrl} 
+                                                src={product.image_url || product.imageUrl} 
                                                 alt={product.title} 
                                                 fill 
                                                 sizes="(max-width: 768px) 100vw, 33vw"
@@ -215,7 +215,7 @@ export default function ShopSection() {
                                     <div className={styles.cardFooter}>
                                         <div className={styles.price}>
                                             <span className={styles.priceAmount}>{product.price}</span>
-                                            <span className={styles.priceCurrency}>{product.curency || product.currency}</span>
+                                            <span className={styles.priceCurrency}>{product.currency}</span>
                                         </div>
                                         <button className={styles.cta} onClick={() => handleInitialBuy(product)}>
                                             {product.cta || 'Acheter'}
@@ -264,7 +264,7 @@ export default function ShopSection() {
 
                         <div className={styles.modalHeader}>
                             <h2 id="payment-modal-title">Paiement Mobile Money</h2>
-                            <p>Produit : <strong>{paymentModal.product.title}</strong> — {paymentModal.product.price}{paymentModal.product.curency || paymentModal.product.currency}</p>
+                            <p>Produit : <strong>{paymentModal.product.title}</strong> — {paymentModal.product.price}{paymentModal.product.currency}</p>
                         </div>
 
                         {!paymentModal.method ? (

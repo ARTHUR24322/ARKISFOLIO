@@ -88,6 +88,8 @@ export default function AdminShop() {
     const openEdit = (product) => {
         setCurrentProduct({
             ...product,
+            externalLink: product.external_link || product.externalLink || '',
+            image_url: product.image_url || product.imageUrl || '',
             features: Array.isArray(product.features) ? product.features.join(', ') : product.features
         });
         setIsEditing(true);
@@ -146,11 +148,12 @@ export default function AdminShop() {
                                     }
                                 }}
                             />
-                            {(currentProduct.previewUrl || currentProduct.imageUrl) && (
-                                <div className={styles.previewContainer}>
-                                    <p className={styles.previewLabel}>Prévisualisation :</p>
-                                    <img src={currentProduct.previewUrl || currentProduct.imageUrl} className={styles.smallPreview} alt="Preview" />
-                                </div>
+                            {(currentProduct.previewUrl || currentProduct.image_url) && (
+                                <img 
+                                    src={currentProduct.previewUrl || currentProduct.image_url} 
+                                    alt="Preview" 
+                                    style={{ marginTop: '10px', maxWidth: '100px', display: 'block' }} 
+                                />
                             )}
                         </div>
 

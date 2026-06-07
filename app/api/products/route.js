@@ -45,7 +45,7 @@ export async function POST(request) {
         const type = formData.get('type') || formData.get('category');
         const externalLink = formData.get('externalLink') || formData.get('digitalLink') || '';
         const badge = formData.get('badge') || '';
-        const curency = formData.get('currency') || formData.get('curency') || '€';
+        const currency = formData.get('currency') || formData.get('curency') || '€';
         const gradient = formData.get('gradient') || '';
         const accent = formData.get('accent') || '';
         const emoji = formData.get('emoji') || '';
@@ -74,14 +74,14 @@ export async function POST(request) {
                 price,
                 type,
                 badge,
-                curency,
+                currency,
                 gradient,
                 accent,
                 emoji,
                 features,
                 cta,
                 published,
-                image_urel: imageUrl,
+                image_url: imageUrl,
                 external_link: externalLink,
             }
         });
@@ -108,7 +108,7 @@ export async function PUT(request) {
         if (formData.has('type') || formData.has('category')) updateData.type = formData.get('type') || formData.get('category');
         if (formData.has('externalLink') || formData.has('digitalLink')) updateData.external_link = formData.get('externalLink') || formData.get('digitalLink');
         if (formData.has('badge')) updateData.badge = formData.get('badge');
-        if (formData.has('currency') || formData.has('curency')) updateData.curency = formData.get('currency') || formData.get('curency');
+        if (formData.has('currency') || formData.has('curency')) updateData.currency = formData.get('currency') || formData.get('curency');
         if (formData.has('gradient')) updateData.gradient = formData.get('gradient');
         if (formData.has('accent')) updateData.accent = formData.get('accent');
         if (formData.has('emoji')) updateData.emoji = formData.get('emoji');
@@ -121,7 +121,7 @@ export async function PUT(request) {
             const fileName = `prod-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
             await supabase.storage.from('products').upload(fileName, file);
             const { data: { publicUrl } } = supabase.storage.from('products').getPublicUrl(fileName);
-            updateData.image_urel = publicUrl;
+            updateData.image_url = publicUrl;
         }
 
         const product = await prisma.product.update({

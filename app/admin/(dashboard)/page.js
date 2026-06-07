@@ -4,7 +4,7 @@ import styles from './page.module.css';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState({ projects: 0, products: 0, apps: 0, messages: 0 });
-    const [analytics, setAnalytics] = useState({ visits: 0, clicks: 0, revenue: 0 });
+    const [analytics, setAnalytics] = useState({ visits: 0, clicks: 0, revenue: 0, cv_downloads: 0 });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -83,6 +83,11 @@ export default function AdminDashboard() {
                     <span className={styles.statLabel}>Clics achat</span>
                     <span className={styles.statValue}>{loading ? '...' : analytics.clicks}</span>
                     <div className={styles.statIcon}>🖱️</div>
+                </div>
+                <div className={`${styles.statCard} ${styles.statAnalytics}`}>
+                    <span className={styles.statLabel}>CV Téléchargés</span>
+                    <span className={styles.statValue}>{loading ? '...' : analytics.cv_downloads}</span>
+                    <div className={styles.statIcon}>📄</div>
                 </div>
                 <div className={`${styles.statCard} ${styles.statRevenue}`}>
                     <span className={styles.statLabel}>Revenu Global</span>

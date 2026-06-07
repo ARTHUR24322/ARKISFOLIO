@@ -14,17 +14,17 @@ model Product {
   price         Float
   type          String
   badge         String?
-  curency       String   @default("€")
+  currency      String   @default("€")
   gradient      String?
   accent        String?
   emoji         String?
   features      Json?
   cta           String?
   published     Boolean  @default(true)
-  image_urel    String?
+  image_url     String?
   external_link String?
   created_at    DateTime @default(now())
-  udapted_at    DateTime @updatedAt
+  updated_at    DateTime @updatedAt
 
   @@map("products")
 }
@@ -62,7 +62,9 @@ model Analytics {
   id      Int    @id @default(1)
   visits  Int    @default(0)
   clicks  Int    @default(0)
-  revenue Float  @default(0)
+
+  revenue      Float  @default(0)
+  cv_downloads Int    @default(0)
 
   @@map("analytics")
 }
