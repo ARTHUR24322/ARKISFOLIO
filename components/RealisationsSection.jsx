@@ -18,7 +18,12 @@ export default function RealisationsSection() {
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
-                    setRealisations(data);
+                    const formattedData = data.map(item => ({
+                        ...item,
+                        mediaUrl: item.media_url || item.mediaUrl,
+                        liveUrl: item.live_url || item.liveUrl || '#'
+                    }));
+                    setRealisations(formattedData);
                 } else {
                     console.error('Data is not an array:', data);
                     setRealisations([]);
