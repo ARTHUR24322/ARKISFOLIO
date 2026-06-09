@@ -103,7 +103,7 @@ export default function HeroSection() {
                             <span>Explorer mon GitHub</span>
                         </a>
                         <a 
-                            href="/cv.pdf" 
+                            href={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cv/cv_arthur_kisumbule.pdf`} 
                             target="_blank" 
                             className={styles.ctaSecondary}
                             onClick={() => {
