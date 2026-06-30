@@ -158,6 +158,19 @@ export default function ThreeScene() {
             cancelAnimationFrame(frameId);
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('resize', onResize);
+            
+            // Dispose geometries and materials to avoid memory leaks
+            geometry.dispose();
+            glowGeo.dispose();
+            auraGeo.dispose();
+            particleGeo.dispose();
+            
+            wireMat.dispose();
+            coreMat.dispose();
+            glowMat.dispose();
+            auraMat.dispose();
+            particleMat.dispose();
+            
             renderer.dispose();
             if (mount.contains(renderer.domElement)) {
                 mount.removeChild(renderer.domElement);

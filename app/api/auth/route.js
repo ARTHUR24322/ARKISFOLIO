@@ -2,9 +2,14 @@ import { NextResponse } from 'next/server';
 import { authSchema } from '../../../lib/validation';
 import { createToken, TOKEN_NAME, revokeToken } from '../../../lib/auth';
 import { rateLimit, getClientIp } from '../../../lib/rate-limit';
+import nodemailer from 'nodemailer';
+import { SignJWT, jwtVerify } from 'jose';
+
+const OTP_TOKEN_NAME = 'otp_session';
+const SECRET_KEY = process.env.ADMIN_TOKEN_SECRET || 'fallback-secret-at-least-32-chars-long';
+const SECRET = new TextEncoder().encode(SECRET_KEY);
 
 export async function POST(request) {
-    // Rate Limit: 10 attempts per hour for login
     const ip = getClientIp(request);
     if (!rateLimit(`login_${ip}`, 10, 3600000)) {
         return NextResponse.json({ error: 'Trop de tentatives. Réessayez plus tard.' }, { status: 429 });
@@ -12,40 +17,94 @@ export async function POST(request) {
 
     try {
         const body = await request.json();
-    const parseResult = authSchema.safeParse(body);
-    if (!parseResult.success) {
-      return NextResponse.json({ error: 'Invalid request payload' }, { status: 400 });
-    }
-    const { email, password } = parseResult.data;
-
+        
         const adminEmail = process.env.ADMIN_EMAIL;
-        const adminPassword = process.env.ADMIN_PASSWORD;
-
-        if (!adminEmail || !adminPassword) {
-            console.error('CRITICAL: ADMIN_EMAIL or ADMIN_PASSWORD not set');
+        
+        if (!adminEmail) {
+            console.error('CRITICAL: ADMIN_EMAIL not set');
             return NextResponse.json({ error: 'Configuration serveur incomplète' }, { status: 500 });
         }
 
-        if (email !== adminEmail || password !== adminPassword) {
-            return NextResponse.json(
-                { error: 'Email ou mot de passe incorrect' },
-                { status: 401 }
-            );
+        if (body.action === 'request_otp') {
+            if (body.email !== adminEmail) {
+                // To avoid leaking whether an email is admin or not, return success but don't send anything
+                // Or just fail. Since it's a personal portfolio, simple failure is fine.
+                return NextResponse.json({ error: 'Email incorrect' }, { status: 401 });
+            }
+
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Generate OTP Session Token (valid for 5 minutes)
+            const otpToken = await new SignJWT({ email: adminEmail, otp })
+                .setProtectedHeader({ alg: 'HS256' })
+                .setIssuedAt()
+                .setExpirationTime('5m')
+                .sign(SECRET);
+
+            // Send Email
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: adminEmail,
+                subject: 'Code de connexion - Portfolio Admin',
+                text: `Votre code secret est : ${otp}\nIl expire dans 5 minutes.`,
+            });
+
+            const response = NextResponse.json({ success: true, message: 'Code envoyé' });
+            response.cookies.set(OTP_TOKEN_NAME, otpToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 300, // 5 minutes
+                path: '/',
+            });
+            return response;
         }
 
-        const token = await createToken({ email, role: 'admin' });
+        if (body.action === 'verify_otp') {
+            const otpCookie = request.cookies.get(OTP_TOKEN_NAME)?.value;
+            if (!otpCookie) {
+                return NextResponse.json({ error: 'Session expirée' }, { status: 401 });
+            }
 
-        const response = NextResponse.json({ success: true, message: 'Connecté avec succès' });
-        response.cookies.set(TOKEN_NAME, token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 60 * 60 * 8, // 8 heures
-            path: '/',
-        });
+            try {
+                const { payload } = await jwtVerify(otpCookie, SECRET);
+                if (payload.otp !== body.otp) {
+                    return NextResponse.json({ error: 'Code incorrect' }, { status: 401 });
+                }
 
-        return response;
+                // Code valid -> create actual login token
+                const token = await createToken({ email: payload.email, role: 'admin' });
+                
+                const response = NextResponse.json({ success: true, message: 'Connecté avec succès' });
+                // Set auth cookie
+                response.cookies.set(TOKEN_NAME, token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'strict',
+                    maxAge: 60 * 60 * 8, // 8 heures
+                    path: '/',
+                });
+                // Clear OTP cookie
+                response.cookies.delete(OTP_TOKEN_NAME);
+                
+                return response;
+            } catch (err) {
+                return NextResponse.json({ error: 'Session expirée ou invalide' }, { status: 401 });
+            }
+        }
+
+        return NextResponse.json({ error: 'Action non reconnue' }, { status: 400 });
+        
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
     }
 }

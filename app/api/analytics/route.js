@@ -8,24 +8,29 @@ export async function POST(request) {
         const { type, amount } = body;
 
         if (type === 'visit') {
-            await prisma.analytics.update({
+            await prisma.analytics.upsert({
                 where: { id: 1 },
-                data: { visits: { increment: 1 } }
+                update: { visits: { increment: 1 } },
+                create: { id: 1, visits: 1 }
             });
         } else if (type === 'click') {
-            await prisma.analytics.update({
+            await prisma.analytics.upsert({
                 where: { id: 1 },
-                data: { clicks: { increment: 1 } }
+                update: { clicks: { increment: 1 } },
+                create: { id: 1, clicks: 1 }
             });
         } else if (type === 'sale') {
-            await prisma.analytics.update({
+            const val = parseFloat(amount) || 0;
+            await prisma.analytics.upsert({
                 where: { id: 1 },
-                data: { revenue: { increment: parseFloat(amount) || 0 } }
+                update: { revenue: { increment: val } },
+                create: { id: 1, revenue: val }
             });
         } else if (type === 'cv_download') {
-            await prisma.analytics.update({
+            await prisma.analytics.upsert({
                 where: { id: 1 },
-                data: { cv_downloads: { increment: 1 } }
+                update: { cv_downloads: { increment: 1 } },
+                create: { id: 1, cv_downloads: 1 }
             });
         }
 
@@ -37,11 +42,14 @@ export async function POST(request) {
 
 export async function GET() {
     try {
-        const stats = await prisma.analytics.findUnique({
+        let stats = await prisma.analytics.findUnique({
             where: { id: 1 }
         });
+        if (!stats) {
+            stats = { visits: 0, clicks: 0, revenue: 0, cv_downloads: 0 };
+        }
         return NextResponse.json(stats);
     } catch (error) {
-        return NextResponse.json({ visits: 0, clicks: 0, revenue: 0 });
+        return NextResponse.json({ visits: 0, clicks: 0, revenue: 0, cv_downloads: 0 });
     }
 }
