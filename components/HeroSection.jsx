@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import styles from './HeroSection.module.css';
+import ShootingStars from './ShootingStars';
 
 const ThreeScene = dynamic(() => import('./ThreeScene'), { ssr: false });
 
@@ -74,6 +75,8 @@ export default function HeroSection() {
                 <div className={styles.botEye} />
             </div>
 
+            <ShootingStars />
+
             <div className={styles.canvasWrap}>
                 <ThreeScene />
             </div>
@@ -104,20 +107,49 @@ export default function HeroSection() {
                         </a>
                         <a 
                             href="#" 
-                            target="_blank" 
                             className={styles.ctaSecondary}
-                            onClick={(e) => {
+                            onClick={async (e) => {
                                 e.preventDefault();
-                                const timestamp = new Date().getTime();
-                                const cvUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cv/cv_arthur_kisumbule.pdf?t=${timestamp}`;
+                                const btn = e.currentTarget;
                                 
+                                // Enregistrement analytique
                                 fetch('/api/analytics', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ type: 'cv_download' }),
                                 }).catch(() => {});
                                 
-                                window.open(cvUrl, '_blank');
+                                const timestamp = new Date().getTime();
+                                const cvUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/cv/cv_arthur_kisumbule.pdf?t=${timestamp}`;
+                                
+                                // Effet de chargement visuel
+                                btn.style.pointerEvents = 'none';
+                                btn.style.opacity = '0.6';
+
+                                try {
+                                    // Utilisation de fetch avec no-store pour outrepasser complètement les caches
+                                    const response = await fetch(cvUrl, { cache: 'no-store' });
+                                    if (!response.ok) throw new Error("Network response error");
+                                    const blob = await response.blob();
+                                    
+                                    // Génération de l'URL objet en mémoire et téléchargement forcé
+                                    const url = window.URL.createObjectURL(blob);
+                                    const link = document.createElement('a');
+                                    link.href = url;
+                                    link.setAttribute('download', 'cv_arthur_kisumbule.pdf');
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    link.remove();
+                                    window.URL.revokeObjectURL(url);
+                                } catch (error) {
+                                    console.error("Fetch failed, falling back to window.open", error);
+                                    // Fallback de sécurité au cas où les règles CORS bloquent la requête javascript
+                                    window.open(cvUrl, '_blank');
+                                } finally {
+                                    // Restauration de l'état du bouton
+                                    btn.style.pointerEvents = 'auto';
+                                    btn.style.opacity = '1';
+                                }
                             }}
                         >
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>

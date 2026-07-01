@@ -1,0 +1,50 @@
+.starsContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1; /* Derrière le contenu mais visible */
+}
+
+.star {
+    position: absolute;
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(0,255,157,0) 0%, rgba(0,255,157,0.8) 50%, rgba(255,255,255,1) 100%);
+    border-radius: 50px;
+    filter: drop-shadow(0 0 6px #00FF9D);
+    transform: rotate(35deg) translateX(-100px); /* Ajusté pour correspondre à une descente fluide */
+    opacity: 0;
+    animation: shoot linear forwards;
+}
+
+/* Têtes des étoiles pour l'effet brillant */
+.star::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 4px rgba(0, 255, 157, 0.8);
+}
+
+@keyframes shoot {
+    0% {
+        transform: rotate(35deg) translateX(-100px);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(35deg) translateX(1500px);
+        opacity: 0;
+    }
+}

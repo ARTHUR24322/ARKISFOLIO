@@ -20,8 +20,8 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata = {
     metadataBase: new URL('https://arthur-portfolio-v2.vercel.app'), // Replace with actual domain when ready
     title: {
-        default: 'Arthur Kisumbule — Développeur créatif, Designer 3D & Créateur d\'agents IA',
-        template: '%s | Arthur Kisumbule'
+        default: 'Arkis Digital SARL — Développeur créatif, Designer 3D & Créateur d\'agents IA',
+        template: '%s | Arkis Digital SARL'
     },
     description:
         'Arthur Kisumbule, expert en expériences digitales immersives et systèmes intelligents. Développement Next.js, Design 3D avec Three.js et automatisation via agents IA.',
@@ -37,8 +37,8 @@ export const metadata = {
         'UX/UI 3D'
     ],
     authors: [{ name: 'Arthur Kisumbule', url: 'https://www.linkedin.com/in/arthur-kisumbule-1b5416301' }],
-    creator: 'Arthur Kisumbule',
-    publisher: 'Arthur Kisumbule',
+    creator: 'Arkis Digital SARL',
+    publisher: 'Arkis Digital SARL',
     formatDetection: {
         email: false,
         address: false,
@@ -48,10 +48,10 @@ export const metadata = {
         canonical: '/',
     },
     openGraph: {
-        title: 'Arthur Kisumbule — Développeur créatif & Créateur d\'agents IA',
+        title: 'Arkis Digital SARL — Développeur créatif & Créateur d\'agents IA',
         description: 'Conception d\'expériences digitales immersives et de systèmes intelligents pour startups ambitieuses.',
         url: '/',
-        siteName: 'Arthur Kisumbule Portfolio',
+        siteName: 'Arkis Digital SARL',
         locale: 'fr_FR',
         type: 'website',
         images: [
@@ -65,7 +65,7 @@ export const metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Arthur Kisumbule — Développeur créatif & Créateur d\'agents IA',
+        title: 'Arkis Digital SARL — Développeur créatif & Créateur d\'agents IA',
         description: 'Expériences digitales immersives et systèmes intelligents.',
         creator: '@arthurkisumbule', // Optional: replace with actual handle
         images: ['/og-image.png'],

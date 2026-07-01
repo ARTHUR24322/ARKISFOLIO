@@ -42,8 +42,8 @@ export default function Navbar() {
         <nav ref={navRef} className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`} role="navigation" aria-label="Main Navigation">
             <div className={styles.inner}>
                 <a href="#" className={styles.logo} onClick={(e) => handleLink(e, '#')} aria-label="Arthur Kisumbule - Accueil">
-                    <Image src="/logo.png" alt="Logo ARKIS" width={32} height={32} className={styles.logoImage} aria-hidden="true" />
-                    <span className={styles.logoText}>ARKIS</span>
+                    <Image src="/logo.png" alt="Logo Arkis Digital SARL" width={32} height={32} className={styles.logoImage} aria-hidden="true" />
+                    <span className={styles.logoText}>Arkis Digital SARL</span>
                 </a>
 
                 <ul className={`${styles.links} ${menuOpen ? styles.open : ''}`}>
@@ -72,7 +72,7 @@ export default function Navbar() {
                             <a href="https://tiktok.com/@yourusername" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>TK</a>
                             <a href="https://facebook.com/yourprofile" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>FB</a>
                         </div>
-                        <p className={styles.legal}>© 2026 ARKIS STUDIO</p>
+                        <p className={styles.legal}>© 2026 Arkis Digital SARL</p>
                     </div>
                 </ul>
 

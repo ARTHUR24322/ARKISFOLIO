@@ -55,8 +55,8 @@ export default function Footer() {
                 </div>
 
                 <div className={styles.bottom}>
-                    <p className={styles.copy}>© 2024 Arthur Kisumbule. Tous droits réservés.</p>
-                    <p className={styles.copy}>Conçu & développé avec ✦ par Arthur Kisumbule</p>
+                    <p className={styles.copy}>© 2026 Arkis Digital SARL. Tous droits réservés.</p>
+                    <p className={styles.copy}>Conçu &amp; développé avec ❆ par Arkis Digital SARL</p>
                 </div>
             </div>
         </footer>

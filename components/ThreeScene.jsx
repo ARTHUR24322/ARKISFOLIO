@@ -10,23 +10,30 @@ export default function ThreeScene() {
         const mount = mountRef.current;
         if (!mount) return;
 
+        let renderer;
+        try {
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            renderer.setSize(mount.clientWidth, mount.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000000, 0);
+            mount.appendChild(renderer.domElement);
+        } catch (e) {
+            console.error("Erreur création WebGL context:", e);
+            // Si le contexte WebGL échoue (par ex: trop de rechargements ou carte graphique saturée), on arrête l'animation proprement.
+            return;
+        }
+
         // Scene setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, mount.clientWidth / mount.clientHeight, 0.1, 100);
         camera.position.z = 4;
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(mount.clientWidth, mount.clientHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setClearColor(0x000000, 0);
-        mount.appendChild(renderer.domElement);
 
         // Sphere geometry
         const geometry = new THREE.SphereGeometry(1.4, 64, 64);
 
         // Wireframe overlay
         const wireMat = new THREE.MeshBasicMaterial({
-            color: 0x4F8EF7,
+            color: 0x00FF9D,
             wireframe: true,
             transparent: true,
             opacity: 0.12,
@@ -36,7 +43,7 @@ export default function ThreeScene() {
 
         // Core glowing sphere
         const coreMat = new THREE.MeshStandardMaterial({
-            color: 0x0a0a1a,
+            color: 0x000000,
             metalness: 0.9,
             roughness: 0.1,
             transparent: true,
@@ -48,7 +55,7 @@ export default function ThreeScene() {
         // Inner glow sphere
         const glowGeo = new THREE.SphereGeometry(1.6, 32, 32);
         const glowMat = new THREE.MeshBasicMaterial({
-            color: 0x4F8EF7,
+            color: 0x00FF9D,
             transparent: true,
             opacity: 0.03,
             side: THREE.BackSide,
@@ -59,7 +66,7 @@ export default function ThreeScene() {
         // Outer aura
         const auraGeo = new THREE.SphereGeometry(2.0, 32, 32);
         const auraMat = new THREE.MeshBasicMaterial({
-            color: 0x8B5CF6,
+            color: 0x00E676,
             transparent: true,
             opacity: 0.015,
             side: THREE.BackSide,
@@ -81,7 +88,7 @@ export default function ThreeScene() {
         const particleGeo = new THREE.BufferGeometry();
         particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const particleMat = new THREE.PointsMaterial({
-            color: 0x4F8EF7,
+            color: 0x00FF9D,
             size: 0.018,
             transparent: true,
             opacity: 0.5,
@@ -93,15 +100,15 @@ export default function ThreeScene() {
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
         scene.add(ambientLight);
 
-        const blueLight = new THREE.PointLight(0x4F8EF7, 4, 8);
+        const blueLight = new THREE.PointLight(0x00FF9D, 4, 8);
         blueLight.position.set(3, 2, 2);
         scene.add(blueLight);
 
-        const purpleLight = new THREE.PointLight(0x8B5CF6, 3, 8);
+        const purpleLight = new THREE.PointLight(0x00E676, 3, 8);
         purpleLight.position.set(-3, -2, 2);
         scene.add(purpleLight);
 
-        const cyanLight = new THREE.PointLight(0x22D3EE, 2, 6);
+        const cyanLight = new THREE.PointLight(0x69FFB4, 2, 6);
         cyanLight.position.set(0, 3, -2);
         scene.add(cyanLight);
 
@@ -115,7 +122,7 @@ export default function ThreeScene() {
 
         // Resize handler
         const onResize = () => {
-            if (!mount) return;
+            if (!mount || !renderer) return;
             camera.aspect = mount.clientWidth / mount.clientHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(mount.clientWidth, mount.clientHeight);
@@ -150,7 +157,7 @@ export default function ThreeScene() {
             blueLight.intensity = 3 + Math.sin(t * 2) * 1.5;
             purpleLight.intensity = 2 + Math.cos(t * 1.5) * 1;
 
-            renderer.render(scene, camera);
+            if (renderer) renderer.render(scene, camera);
         };
         animate();
 
@@ -171,9 +178,17 @@ export default function ThreeScene() {
             auraMat.dispose();
             particleMat.dispose();
             
-            renderer.dispose();
-            if (mount.contains(renderer.domElement)) {
-                mount.removeChild(renderer.domElement);
+            if (renderer) {
+                // Prevenir les fuites VRAM sévères
+                // On essaie d'abord d'obtenir l'extension webgl avant de forcer la perte
+                const extension = renderer.getContext().getExtension('WEBGL_lose_context');
+                if (extension) extension.loseContext();
+                renderer.dispose();
+                renderer.forceContextLoss();
+                
+                if (mount.contains(renderer.domElement)) {
+                    mount.removeChild(renderer.domElement);
+                }
             }
         };
     }, []);

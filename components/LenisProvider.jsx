@@ -6,6 +6,7 @@ export default function LenisProvider() {
         let lenis;
         let tickerCallback;
         let gsapInstance;
+        let stInstance;
         
         (async () => {
             const LenisModule = await import('lenis');
@@ -19,6 +20,7 @@ export default function LenisProvider() {
             const { gsap } = await import('gsap');
             gsapInstance = gsap;
             const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+            stInstance = ScrollTrigger;
             gsap.registerPlugin(ScrollTrigger);
 
             lenis.on('scroll', ScrollTrigger.update);
@@ -32,7 +34,12 @@ export default function LenisProvider() {
         })();
 
         return () => {
-            if (lenis) lenis.destroy();
+            if (lenis) {
+                if (stInstance) {
+                    lenis.off('scroll', stInstance.update);
+                }
+                lenis.destroy();
+            }
             if (gsapInstance && tickerCallback) {
                 gsapInstance.ticker.remove(tickerCallback);
             }
